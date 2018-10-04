@@ -1627,21 +1627,491 @@ Let's visualize an example of Show() operation
 \newpage
 \section{Problems}\index{Problems}
 \begin{problem}
-  We implemented a stack in class using a linked list. Our implementation stored a pointer to the {\it head} of the list, i.e. the bottom of the stack. Write a linked list based implementation of a stack that stores a reference to the {\it top} of the stack. Your implementation should include the usual stack functions, i.e.
+  Implement the isEmpty() function in your Stack class. The function should return true if the stack is empty and return false if not.
+  \paragraph{Instructions}
   \begin{itemize}
-  \item push
-  \item pop
-  \item size
-  \item is\_empty
-  \item show
-  \end{itemize}
-  Keep in mind to include the functions required by every class, i.e.
-  \begin{itemize}
-  \item default constructor
-  \item copy constructor - you can disable this by making it private
-  \item detructor - keep in mind that is must dallocate {\it all} nodes.
+  \item Think about the value stored in head pointer when the stack is Empty
   \end{itemize}
 \end{problem}
+~\\
+\begin{problem}
+  Implement the  functions Top() and Bottom() in your Stack class. The Top() function should return the top element of the stack. The Bottom() function should return the element on the bottom of the stack.
+  \paragraph{Instructions}
+  \begin{itemize}
+  \item Top() function is easy to implement after doing the problem above. Use head pointer to implement this function
+  \item For Bottom() function, think how to iterate over the stack till the bottom using only head pointer and a temporary pointer.
+  \end{itemize}
+\end{problem}
+
+\newpage
+\section{Solution}
+\begin{lstlisting}[language=C++]
+  // ... copy and paste your code
+\end{lstlisting}
+
+\newpage
+\section{Student Feedback}
+\textbf{What did you learn from this lab?}\\
+\noindent\fbox{\parbox{\textwidth}{
+    % Your feedback here.
+  }
+}\\
+\textbf{What part of the lab is still unclear to you?}\\
+\noindent\fbox{\parbox{\textwidth}{
+    % Your feedback here.
+  }
+}\\
+\textbf{What can be improved in this lab?}\\ 
+\noindent\fbox{\parbox{\textwidth}{
+    % Your feedback here.
+  }
+}\\
+
+
+\newpage
+%----------------------------------------------------------------------------------------
+
+\chapterimage{chapter_head_2.pdf} % Chapter heading image
+\chapter{Constructors in C++ \hspace{36mm} {\textsc{\small SCRIPTED BY : MINHAJ AHMED, ABDUL RAFAY AND TAJ M KHAN}}}
+
+\section{Objective}\index{Objective}
+
+You know about C++'s user-defined types (struct and class) and about their members i.e. member variables and member functions. In this lab, you will learn
+
+\begin{itemize}
+	\item The different types of Constructors.
+	\item Overloaded Constructors.
+	\item Copy Constructors.
+	\item Destructors
+	\item Array of Pointers.
+\end{itemize}
+
+%------------------------------------------------
+
+\section{Key Concepts}\index{Key Concepts}
+
+\subsection{Constructors}
+
+Constructors are special member functions of a class that are used for initializing Objects of that class. They are defined within the class and have the same name as the class. They are automatically called upon the creation of an object. Their return type is not specified in the code. If we don't specify a constructor, C++ generates a default constructor that doesn't take any parameters and has an empty body. Suppose you have got a structure Date and you declare a variable of type Date in main():
+
+%code
+\begin{lstlisting}[language=C++, caption = Uninitialized members]
+struct Date 
+{
+	int d,m,y;
+};
+
+int main() 
+{
+	Date today;
+	return 0;
+}
+\end{lstlisting}
+
+\noindent What are the values for member variables d, m, and y in today? Take a guess and then verify it by outputting the values on the screen. Now, you know, about variables, that you've got to initialize them. Therefore, the above code would have garbage values for the members of today. One solution could be to give them values before using them:
+% [TODO] confirm the garbage value claim, as class members might be default initialized!
+%code
+\begin{lstlisting}[language=C++, caption = Initializing members]
+struct Date 
+{
+	int d,m,y;
+};
+
+int main()
+{
+	Date today; 
+	today.d=7;today.m=12;today.y=2018;
+	return 0;
+}
+\end{lstlisting}
+
+\noindent What if you had declared 5 different variables of type Date ? What if you had declared an array of 100 Dates ? Initializing this way would be a pain! (ok, the array thing could be done in a loop but still ...). What if you forgot to initialize your objects ? C++ provides a better mechanism.
+\smallskip
+~\\
+
+\noindent C++ allows you to define special functions for this purpose of initialization. These functions are called constructors. Since constructors are special functions they have their peculiarities:
+
+\smallskip
+%~\\
+
+\noindent Syntax wise:
+\begin{itemize}
+	%\item [$-$] % use - instead of bullet
+	\item [$-$] The name of a constructor is exactly the same as the name of the struct/class it is supposed to initialize.
+	\item [$-$] Unlike normal functions, constructors do not have a return type. Not even void!
+\end{itemize}
+
+\smallskip
+%~\\
+
+\noindent Behaviour wise:
+\begin{itemize}
+	\item[$-$] Constructors get called automatically, whenever an object of that type is created.
+	\item[$-$] While you can do anything in a constructor, their primary purpose is to initialize the type's member variables.
+\end{itemize}
+
+\noindent So, using a constructor, now our above code becomes:
+%code
+\begin{lstlisting}[language=C++, caption = Constructor]
+struct Date 
+{
+	int d,m,y;
+	Date()
+	{
+		d=7;m=12;y=2018;
+	}
+};
+
+int main() 
+{
+	Date today;
+	return 0;
+}
+\end{lstlisting}
+
+\noindent The above code is exactly equal to the previous code with some superior qualities. Let's see what's there. Inside the struct Date, we've defined a member function whose name is, surprise, exactly the same as the name of the struct! This is the constructor. See how, inside the constructor, we can access the member variables directly, instead of prefixing each with the name of the variable and the dot operator each time ? Our code has become briefer and cleaner. In the function main(), we declare a variable named today of type Date. What are the values of its member variables at that point ? Remember that bit about constructors being called automatically whenever an object of that type is created ? Well, today is an object of type Date, so, when it's created, Date's constructor will be called for it. The code inside the constructor would be executed and it will assign the values 5, 12, and 2018 to members d, m, and y, respectively of the object today. See how after the declaration of today, it's already initialized. 
+
+Now coming back to that earlier question of suppose you had declared 5 different variables of type Date ? Well, the constructor would've been called for each one of them and would have initialized the member variables of each of those objects. What if you'd declared an array of 100 Date objects ? You start to see the benefits of automatic initialization via constructors. And, you can afford to forget about forgetting to initialize the objects.
+
+\subsection{Constructor Overloading}
+
+Like normal functions, constructors can be overloaded, which means that you can have more than one constructors inside a user defined type. What's the advantage of having multiple constructors ? Well, you might want to initialize your objects differently each time they are created. As an example, let's take our favourite Date structure. Right now, every time you create an object of Date, it gets initialized to 07/12/2018. Suppose you want to create an object that where you want to specify the value for day at the time of initialization but would prefer the month and the year to be initialized to the default values. Clearly, the above code does not provide for this. Another time, you might want to be able to specify the day as well as the month at the time of initialization but not the year. How about being able to specify all three at the time of creation ? Overloaded constructors in C++ help you cover all the cases of initialization by letting you specify a constructor for each occasion:
+%code
+\begin{lstlisting}[language=C++, caption = Overloaded constructors]
+struct Date 
+{
+	int d,m,y;
+	Date(){ d=7;m=12;y=2018; } 
+	Date (int day) { d=day;m=12;y=2018; } 
+	Date (int day, int month) { d=day;m=month;y=2018; } 
+	Date (int day, int month, int year) { d=day;m=month;y=year; } 
+};
+
+int main()
+{
+	Date d0;	//d=7, m=12, y=2018
+	Date d1(15);	//d=15, m=12, y=2018
+	Date d2(15, 11);	//d=15, m=11, y=2018
+	Date d3(15, 11, 2003);	//d=15, m=11, y=2003
+	//Date d4(15, 11, 2003, 33);//Error: no matching ctor.
+	// ... code that does something
+	return 0;
+}
+\end{lstlisting}
+
+\noindent In main(), when we create an object of type Date, we pass it different values in function-style arguments. Based on the number and types of values passed to each variable (remember, these are variables not functions!), the compiler will select the appropriate constructor it can call to initialize that particular object while passing the values to that constructor. So, in the above code, no value is being given to the object d0 of type Date so the compiler will look for a constructor of type Date which does not take any arguments. Finding that the first constructor matches this situation will call it and which will assign the default values to all three members of d0. For the object d1, we are passing it the value 15, it'll see that there's one constructor in Date which takes on argument of type integer. This constructor will be called for d1 and the value 15 will be passed in the function parameter day of the constructor 2. This constructor will initialize the member d with the value passed in parameter day and put default values in members m and y. Similarly, constructors 3 and 4 will be called to initialize the objects d2 and d3. Thus in providing multiple constructors for a type, we give the user flexibility to initialize objects in multiple manners.
+
+Using default arguments can limit the number of constructors you've to define e.g., the above struct can be defined as under without any loss of functionality:
+%code
+\begin{lstlisting}[language=C++, caption = Default arguments]
+struct Date 
+{
+	int d,m,y;
+	Date (int day=7, int month=12, int year=2018)
+	{
+		d=day;
+		m=month;
+		y=year;
+	}
+};
+\end{lstlisting}
+
+
+%C++ 11 stuff
+%Date today = Date {7,12,2018}; // initializer_list
+%Date today {7,12,2018};
+
+% introduce destructors. will pick up ctors later.
+\section{Destructors}
+Just like constructors let you execute code and do stuff (initialize variables) when variables/objects are created, C++ provides you a mechanism to be able to execute code and do stuff when variables/objects are destroyed i.e., you know, when they go out of scope or are deleted. This is done via Destructors which, like constructors, are special functions in a user-defined type with the following differences:
+
+\noindent Syntax wise:
+\begin{itemize}
+	\item[$-$] a destructor's name is the type's name preceded by the character tilda '\textasciitilde'
+	\item[$-$] destructors don't take any arguments
+	\item[$-$] therefore, destructors cannot be overloaded.
+\end{itemize}
+
+\noindent Behaviour wise:
+\begin{itemize}
+	\item[$-$] Destructors are called when an object goes out of scope or is otherwise destroyed
+	\item[$-$] The primary function, no pun intended, of the destructors is to perform clean up and free up any resources that need freeing.
+\end{itemize}
+%use the Date type to show that default dtors are usually enough
+Suppose you want to built your very own string type:
+%code
+\begin{lstlisting}[language=C++, caption = struct MyString]
+struct MyString 
+{
+	int size;
+	char *str;
+	
+	MyString()
+	{
+		size=-1; str=NULL;
+	} 
+	MyString(int sz)
+	{
+		size=sz;
+		str=new char[size+1];
+		if(str==NULL)
+		{
+			cout<<"Error allocating memory"<<endl;
+			//exit(-1);
+		} 
+		for(int i=0; i<size; i++)
+			str[i]='a'+i%26; //repeat a-z
+		str[size]='\0'; // terminating NULL
+	}
+}; // end struct MyString
+\end{lstlisting}
+
+The struct maintains an integer to store the size of the string and a character array to store the actual string. [If someone's thinking that you don't actually need the integer to store the size, you are absolutely right but, for pedagogical reasons plz excuse our inefficiency.] We provide two constructors: one for default values and one to create a string of specific size initialized to lower-case alphabet. Now you may use this type in your code:
+%code
+\begin{lstlisting}[language=C++, caption = Use MyString in main()]
+int main() 
+{
+	// .... your code
+	for(int i=0; i<23; i++)
+	{
+		Mystring s(i);
+		cout<<s.str<<endl;
+		// ... you do ur stuff
+	}
+	return 0;
+}
+\end{lstlisting}
+
+What's going on in the above code, memory wise ? Inside the for loop, your user-defined strings are being created and used. What's the scope, life time, of these objects ? What happens to the memory each one of them allocates for it's corresponding character array ? You know that if you allocate memory dynamically, as it's being done in these constructors, it is your responsibility to free it. Is the memory being freed ? If no, what what can we do ? \smallskip
+~\\
+\noindent As responsible programmers, we should free this memory. One way could be:
+%code
+\begin{lstlisting}[language=C++, caption = Free memory in main()]
+int main() 
+{
+	// .... your code
+	for(int i=0; i<1000; i++)
+	{
+		Mystring s(i);
+		cout<<s.str<<endl;
+		// ... you do ur stuff
+		
+		delete [] s.str;
+	}
+	return 0;
+}
+
+\end{lstlisting}
+
+\noindent This approach would require you to keep track of the life time of each and every MyString object in your program and free their internal character arrays at appropriate times, a huge hassle. That's where C++ destructors jump to your rescue. The key point is that we will not be needing the memory once the object is destroyed. If only we could have this clean up code automatically executed for each object whenever it is destroyed, we needn't worry about keeping track of their life times! The definition of our type becomes:
+%code
+\begin{lstlisting}[language=C++, caption = Destructor]
+struct MyString 
+{
+	int size;
+	char *str;
+	MyString()
+	{
+		size=-1; str=NULL;
+	} 
+	MyString(int sz)
+	{
+		size=sz;
+		str=new char[size+1];
+		if(str==NULL)
+		{
+			cout<<"Error memory"<<endl;
+			exit(-1);
+		} 
+	for(int i=0; i<size; i++)
+		str[i]='a'+i%26;
+	str[size]='\0';
+	}
+	
+	// dtor
+	~MyString()
+	{
+		if (str!=NULL)
+		{
+			delete [] str;
+			str=NULL;
+		} 
+		size=-1; 
+	}
+
+}; // end struct MyString
+\end{lstlisting}
+
+And we needn't worry about freeing the memory for MyString in our code any more.
+
+\section{Copy Constructor}
+Often in our code, we need to create new objects and initialize them to the contents of existing objects i.e. we need the new objects to be copies of the existing objects. Consider the following code:
+%code
+\begin{lstlisting}[language=C++, caption = Need for Copy Ctor]
+int main() 
+{
+	int y = 5;
+	Date d (07,12,2018);
+	MyString s (28);
+	
+	cout<<"initial values:"<<endl;
+	cout<<"y = "<<y<<endl;
+	cout<<"d = "<<d.d<<"/"<<d.m<<"/"<<d.y<<endl;
+	cout<<"s = "<<s.str<<endl;
+	
+	for(int i=0; i<10; i++)
+	{	
+		int yy = y;
+		Date dd = d;
+		MyString ss = s;
+		
+		// ... you code here
+	}
+	
+	cout<<"final values:"<<endl;
+	cout<<"y = "<<y<<endl;
+	cout<<"d = "<<d.d<<"/"<<d.m<<"/"<<d.y<<endl;
+	cout<<"s = "<<s.str<<endl;
+	
+	cout<<"hooray!!!"<<endl;
+	return 0;
+}
+\end{lstlisting}
+
+\noindent Observe the output when you run it. What happens ?
+\smallskip
+~\\
+
+\noindent By default when we copy objects, a byte-wise copy is done for each member i.e. for each member of the existing object, the value of that member is copied in its counter part in the newly created object. That worked perfectly well for all except one of the types in our program. Can you dig out the reason ?
+
+Inside the for loop, when the object ss is initialized from the object s, a default member-wise copy is done. Which results in assigning the value of the character pointer s.str to its counterpart ss.str. They both are now pointing to the same memory location. So far, so good. At the end of the for loop, the scope of ss ends and, since it's going to be destroyed, its destructor is called which frees up the character array being pointed to by ss.str pointer (remember, s.str is still pointing to the same memory). In the next iteration, the object ss is created again and ss.str is initialized to s.str (pointing to the memory location which's been freed). When it goes out of scope, the destructor tries to free the ss.str which is pointing to a memory location which's already been freed. You can't free a memory which's not allocated any more, hence the problem. What to do ?
+
+Again, C++ has figured it out for you. It provides a special constructor, called copy constructor, which is called when the object of a type is created from an existing object. The existing object is passed as an argument to this copy constructor and we can write code to construct the new object to our satisfaction if we do not like the default copying operation. We can add a copy constructor to our code:
+%code
+\begin{lstlisting}[language=C++, caption = Copy Constructor]
+struct MyString 
+{
+	int size;
+	char *str;
+	
+	MyString(){size=-1; str=NULL;} 
+	MyString(int sz)
+	{
+		size=sz;
+		str=new char[size+1];
+		if(str==NULL)
+		{
+			cout<<"Error memory"<<endl;
+			exit(-1);
+		} 
+		for(int i=0; i<size; i++)
+			str[i]='a'+i%26;
+		str[size]='\0';
+	}
+	
+	// copy constructor
+	MyString(MyString& const rhs)
+	{
+		size=rhs.size;
+		str=new char[size+1];
+		if(str==NULL)
+		{
+			cout<<"Error allocating memory"<<endl;
+			//exit(-1);
+		} 
+		for(int i=0; i<size; i++)
+			str[i]=rhs.str[i];
+		str[size]='\0';
+	}	
+	
+	// dtor
+	~MyString()
+	{
+		if (str!=NULL)
+		{
+			delete [] str;
+			str=NULL;
+		} 
+		size=-1; 
+	}
+	
+
+}; // end struct MyString
+\end{lstlisting}
+
+\noindent This copy constructor will be called whenever an object of MyString would be created from an existing object with the existing object being passed as a parameter in the reference variable rhs. See how instead of copying the address of the existing object in the pointer str, we allocate separate memory for the string of the new object being constructed and copy the elements of the string of the existing object to this newly allocated array one by one. After construction, both the existing and the newly formed object have their separated allocated memories containing the separate copies of the strings. Thus when the local object, i.e ss,  will go out of scope, its destructor will free up it's own allocated memory, leaving the memory for the string of the original existing object, i.e. s, intact.
+
+
+\section{Defaults}
+If you do not declare a constructor or destructor in an object, the C++ standard specifies that your compile will generate for you:
+\begin{itemize}
+	\item[$-$] a default constructor which would:
+	\begin{itemize}
+		\item leave the built-in types (int, float, pointers, etc.) to an uninitialized value
+		\item call the default constructor on class members
+	\end{itemize}
+	\item[$-$] a default copy constructor which would do a member wise copy of the existing object to the members of the new object
+	\item[$-$] a default destructor which would do nothing
+	%\item[]$-$] a default move constructor
+\end{itemize}
+
+% From C++ onwards, there are move constructors as well.
+
+
+\newpage
+\section{Problems}\index{Problems}
+
+\begin{problem} Create a class point\_3D which should store the three dimensional coordinates of a point as x, y, and z. The following code in main should behave as in commments:
+	%code
+	\begin{lstlisting}[language=C++, caption = Create class point\_3D]
+	int main()
+	{
+		point_3D p0;	//should initialize x,y,z to 0,0,0
+		point_3D p1(23);//should initialize x,y,z to 23,0,0
+		point_3D p2(23,33);//should initialize x,y,z to 23,33,0
+		point_3D p3(2,3,5);//should initialize x,y,z to 2,3,5
+		
+		p3.display();	//outputs pt on screen as (2,3,5)
+		
+		point_3D p4 = p2; //should initialize xyz in p4 to 23,33,0
+		
+		//dynamically create some points and display them.
+		int x=0;
+		cout<<"enter the number of pts u want to create:"<<endl;
+		cin>>x;
+		point_3D *p = new point_3D[x];
+		for(int i=0; i<x; i++)
+			(p+i)->display();
+		delete [] p;		
+		return 0;
+	}
+	\end{lstlisting}
+	
+\noindent Based on your understanding, guess whether you need to make any constructor(s), destructor.\\
+\end{problem}
+\begin{problem} Create a class polygon\_2D which stores the vertices of a polygon as a set of point\_3D objects with the z-coordinate always initialized to 0. When creating an object of polygon\_2D, the user should be able to specify the number of points in the polygon. i.e.:
+	%code
+	\begin{lstlisting}[language=C++, caption = Create class polygon\_2D]
+	int main() 
+	{
+		polygon_2D pg; // creates a polygon with zero points
+		polygon_2D pg1(3); // creates a polygon with 3 pts i.e a triangle
+		polygon_2D pg2(5); // 5 pts i.e a pentagon
+		
+		pg2.display(); 	// displays the points comprising this polygon. 
+		polygon_2D pg3 = pg2;
+		pg3.display();
+		for(int i=0;i<10;i++)
+		{
+			polygon_2D pg4 = pg3;
+			pg4.display();
+		}		
+		return 0;
+	}
+	\end{lstlisting}	
+	Based on your understanding, guess whether you need to make any constructor(s), destructor.\\
+\end{problem}
+
 
 \newpage
 \section{Solution}
@@ -1800,456 +2270,6 @@ Therefore those functions that need not be approachable should be declared priva
 \begin{problem}
   Write a probram with a base class $animal$. Inside it define a name and an age variables, and $setvalue()$ function. Then create two bases variables Dog and Dolphin which write a message telling the age, the name and giving some extra information like color or breed.
 \end{problem}
-
-\newpage
-\section{Solution}
-\begin{lstlisting}[language=C++]
-  // ... copy and paste your code
-\end{lstlisting}
-
-\newpage
-\section{Student Feedback}
-\textbf{What did you learn from this lab?}\\
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-\textbf{What part of the lab is still unclear to you?}\\
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-\textbf{What can be improved in this lab?}\\ 
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-
-\newpage
-% ----------------------------------------------------------------------------------------
-\chapterimage{chapter_head_2.pdf} % Chapter heading image
-\chapter{Constructors in C++ \hspace{36mm} {\textsc{\small SCRIPTED BY : MINHAJ AHMED}}}
-
-\section{Objective}\index{Objective}
-
-This Lab session introduces you to the Different types of Constructors in C++. In this lab, you will learn
-
-\begin{itemize}
-\item The different types of Constructors.
-\item Overloaded Constructors.
-\item Copy Constructors.
-\item Destructors
-\item Array of Pointers.
-\end{itemize}
-
-% ------------------------------------------------
-
-\section{Key Concepts}\index{Key Concepts}
-
-\subsection{Constructors}
-
-Constructors are special member functions of a class that are used for initializing Objects of that class. They are defined within the class and have the same name as the class. They are automatically called upon the creation of an object. Their return type is not specified in the code. If we don't specify a constructor, C++ generates a default constructor that doesn't take any parameters and has an empty body.
-
-\subsection{Constructor Overloading}
-
-Function Overloading is a concept in modern programming languages in which two functions may have the same name. The difference between the two functions having the same name is that they have different number, type or order of parameters, but all overloaded functions have the same return type. Like Function Overloading , Constructors can be overloaded too. By giving varying parameter types, we can make different Constructors. First of all, there are two types of constructors for an object. The \textbf{Default Constructor} (also known as the \textbf{Nullary} or \textbf{Parameterless} constructor) does not contain any parameter, and is called by default even if it is not defined by the programmer. The \textbf{Overload Constructor}, takes parameters and initializes the data members of the objects. According to the need, there can be multiple overloaded constructors.
-
-\subsection{Copy Constructors}
-
-Copy Constructors are a special type of overloaded constructors that initialize an object using another object, copying the other objects properties in the newly initialized object. The Copy Constructor takes an object by reference as its parameter, in order to access each of its data members and member functions, which can't be done when passing the object by value. Bear in mind that the object being passed in the copy constructor as the parameter must belong to the same class as the object being initialized. The \texttt{const} keyword is used to ensure that the object being passed doesn't get its properties changed in the copy constructor.
-
-% https://www.cs.nmsu.edu/~rth/cs/cs177/map/datamem.html
-
-\subsection{Destructors}
-
-Destructors are special member functions, just like Constructors, that are called automatically when the object goes out of scope or is explicitly deleted. They are used to deallocate memory and do other cleanup for a class object and its data members when the object is destroyed.
-
-
-\begin{lstlisting}[language=C++, caption={Declaration of Overloaded Constructors, Copy Constructor and Destructor}]
-  struct Light
-  {
-    bool activated;
-    int brightness;
-    
-    Light();                                // Default Ctor
-    Light(bool activated);                  // Overloaded Ctor 1
-    Light(int brightness);                  // Overloaded Ctor 2
-    Light(bool activated, int brightness);  // Overloaded Ctor 3
-    Light(const Light& light);              // Copy Ctor
-    ~Light()                                // Destructor
-  }
-\end{lstlisting}
-
-\subsection{Array of Pointers}
-
-Just like how we can declare an array of integers, characters, or strings or user-defined objects, we can also declare an array of pointers that can point to different objects of the same type, for example, an array of integer pointers will have each of its entries point to integers. We can also declare a dynamic array of pointers. Each of its elements are empty pointers when the array is made. Each of these pointers can be used for dynamic memory allocation for objects or can point to already created objects. Deleting an array of pointers might involve accessing each of its elements and deleting them individually as each of its elements are pointers to objects. In the code on the next page, \texttt{lights} is a static array of pointers, while lightptrs is a dynamic array of pointers. Detailed usage is under the Syntax Examples.
-\vfill
-
-\begin{lstlisting}[language=C++, caption=Declaration of Arrays of Pointers]
-  int main()
-  {
-    Light *lights[4];   // Static Array of Pointers to 10 integers
-    Light **lightptrs;  // Declaration of Pointer to a Pointer
-    // Initialization of the Dynamic Array of Pointers
-    lightptrs = new Light*[4];
-    for (int i = 0; i < 4; i++)
-    {
-      lights[i] = new Light(); // Filling the Static Array
-      lightptrs[i] = new Light(); // Filling the Dynamic Array
-    }
-  }
-\end{lstlisting}
-
-% ------------------------------------------------
-% \vspace{-1.3cm}
-
-\section{Syntax Examples}\index{Syntax Examples}
-
-% \vspace{-1em}
-
-\begin{lstlisting}[language=C++, caption={Default, Overloaded and Copy Constructors}]
-  struct BookShelf
-  {
-    int capacity;
-    Book** books;
-    int noOfBooks;
-    BookShelf()
-    {   // Default Constructor
-      noOfBooks = 0;
-    }
-    BookShelf(int Bookcapacity)
-    {   // Overloaded Constructor
-      this->capacity = Bookcapacity;
-      books = new Book*[capacity];
-      noOfBooks = 0;
-    }
-    BookShelf(const BookShelf& bookshelf) 
-    {   // Copy Constructor
-      this->capacity = bookshelf.capacity;
-      this->noOfBooks = bookshelf.noOfBooks;
-      this->books = bookshelf.books;
-    }
-    Add(Book book)
-    {   // Member Function
-      if (noOfBooks < capacity)
-      {
-        this->books[noOfBooks] = book;
-        noOfBooks++;
-      }
-    }
-    ~BookShelf()                            
-    {   // Destructor
-      delete [] books;
-    }
-  }
-\end{lstlisting}
-
-
-% Notice that we didn't make any destructor in our class. That doesn't mean the class does not have any destructor at all. The compiler generates a destructor for the class just like it generates a default constructor. When do we define a destructor for our class then?  When we dynamically allocate any memory using a pointer, we need to free that memory in our destructor, since the automatically generated destructor only deletes the objects, and doesn't free any dynamically allocated memory. The code below doesn't contain any dynamically allocated memory (objects made by \texttt{new} keyword). Also, 
-
-Even if we don't define our destructor for our class, the compiler generates one for us, that deallocates all objects made inside the class, but it cannot deallocate any dynamically allocated memory, i.e objects created with the \texttt{new} keyword. For such objects we have to define our own destructor which deallocates all dynamically allocated objects.
-
-
-% \begin{lstlisting}[language=C++, caption={Use of Array of Pointers and Destructors}]
-%   struct Car
-%   {
-%   String model;
-%   String registration;
-%   Person* passengers;
-
-%   Car()                           // Default Ctor
-%   {
-%   model = "";
-%   registration = "";
-% }
-%   // Overloaded Constructor
-%   Car(String Model, String Registration, Person[] persons)
-%   {
-%   this->model = Model;
-%   this->registration = Registration;
-%   this->passengers = persons;
-% }
-%   Car(const Car& car)   // Copy Constructor
-%   {
-%   this->model = car.model;
-%   this->registration = car.registration;
-%   this->passengers = car.passengers;
-% }
-%   // passengers can exist outside of the car object, so
-%   // the pointers to the passengers will be made NULL,
-%   // rather than deleting them in the Destructor.
-%   ~Car()               // Destructor
-%   {
-%   for (int i = 0; i < 4; i++)
-%   {
-%   this->passengers[i] = NULL;
-% }
-% }
-% }
-% \end{lstlisting}
-
-\begin{lstlisting}[language=C++, caption={Use of Array of Pointers and Destructors}]
-  int main()
-  {
-    int** ptrs;                 //Pointer to an array of pointers
-    ptrs = new int*[5];         // Dynamic allocation of array of 
-    for (int i = 0; i < 5; i++) // pointers
-    {
-      ptrs[i] = new int(i);   // making new objects in each 
-    }                           // element of the pointer array.
-    for (int i = 0; i < 5; i++)
-    {
-      cout << *(ptrs[i]);     // Each entry is a pointer, for the
-    }                           // value we need to dereference it.
-    for (int i = 0; i < 5; i++)
-    {
-      delete ptrs[i];         // Delete each pointer
-    }  
-    delete [] ptrs;             // Delete the pointer array
-    
-    return 0;
-  }
-\end{lstlisting}
-
-\newpage
-\section{Problems}\index{Problems}
-
-\begin{problem} Make a class Point which has x and y coordinates as its data members, and a display() member function that shows the coordinates in the format (x,y) on the console. Make its default, overloaded and copy constructors. \\
-\end{problem}
-\begin{problem} Write a Class Quadrilateral that has an array of pointers that points to 4 Objects of type Point. Make its default, overloaded and copy constructors and destructor. There must be an overload constructor that takes coordinates in integer type, an overloaded constructor that takes 4 Point Objects and copies them to create new objects. Remember that dynamically created objects have to be deleted explicitly. \\
-\end{problem}
-\begin{problem} Write a C++ Class called SuperString that contains a character array pointer as an attribute. Make its default, overloaded and copy constructors and destructor. The Overloaded Constructor must take a char array as an argument. The class must have a display() that prints the text on the console, an empty() function that empties the SuperString, and a length() function that returns the length of the SuperString. All these functions have to be member functions of the class.
-\end{problem}
-
-\newpage
-\section{Solution}
-\begin{lstlisting}[language=C++]
-  // ... copy and paste your code
-\end{lstlisting}
-
-\newpage
-\section{Student Feedback}
-\textbf{What did you learn from this lab?}\\
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-\textbf{What part of the lab is still unclear to you?}\\
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-\textbf{What can be improved in this lab?}\\ 
-\noindent\fbox{\parbox{\textwidth}{
-    % Your feedback here.
-  }
-}\\
-
-\newpage
-% ----------------------------------------------------------------------------------------
-\chapterimage{chapter_head_2.pdf} % Chapter heading image
-
-\chapter{More On Constructors \hspace{32mm} {\textsc{\small SCRIPTED BY : ABDUL RAFAY}}}
-\section{Default Constructor}\index{Default Constructor} 
-Default constructors initializes the class internals.It is created by compiler by default if user has not declared a constructor and they are called automatically when an object is made.
-
-\subsection{Sample Code}
-\begin{lstlisting}
-  class myClass
-  {
-    public:
-    myClass()
-    {
-      health = 100;
-      daysOfWeek = 7;
-      cout << "Default Constructor called" << endl;
-    }
-    
-    private:
-    int health;
-    int daysOfWeek;
-  };
-  
-  void main()
-  {
-    myClass obj;
-  }
-\end{lstlisting}
-\textbf{Output:} \\
-Default Constructor called\\
-
-\section{Constructor Overloading}\index{Constructor Overloading}
-Constructors can be overloaded the same way function are overloaded in c++.Overloaded constructors have the same name as the class and they vary in terms of number and types of arguments passed: upon which a specific constructor is called.
-
-\subsection{Sample Code}
-\begin{lstlisting}
-  class myClass
-  {
-    public:
-    myClass(int HEALTH, int DOW)
-    {
-      health = HEALTH;
-      daysOfWeek = DOW;
-    }
-    private:
-    int health;
-    int daysOfWeek;
-  };
-  
-  void main()
-  {
-    //Overload constructor with 2 int type arguments is called
-    myClass obj(100, 7);  
-  }
-\end{lstlisting}
-\subsection{Copy Constructor}\index{Copy Constructor}
-There is a special type of overloaded constructor called the 'Copy Constructor' which takes reference of an object of the same class and copies the content of the referenced object into the object whose copy constructor is called.
-\subsection{Sample Code}
-\begin{lstlisting}
-  class myClass
-  {
-    public:
-    myClass(const myClass& ref_obj)
-    {
-      health = ref_obj.health;
-      daysOfWeek = ref_obj.daysOfWeek;
-    }
-    private:
-    int health;
-    int daysOfWeek;
-  };
-  
-  void main()
-  {
-    /*
-    Copy constructor is called when an object is assigned to another object 
-    of the same class
-    */
-    
-    myClass ref_obj(100, 7);
-    myClass obj = ref_obj; //Copy Constructor called
-  }
-\end{lstlisting}
-\begin{tcolorbox}[width=\textwidth,colback={white},title={KEYNOTE},colbacktitle=purple!50!white,coltitle=black]
-  By design all the private variables are per class and \emph{NOT}  per object that is why objects of same class can have access to each others private variable. Due to this reason in listing shown above health = \texttt{ref\_obj}.health does not give any error.
-  
-\end{tcolorbox}
-
-\section{Problems}\index{Problems}
-You are going to Write your own String class. Let us call it SuperString
-The class will have constructor, overloaded constructor that takes in a \emph{character array}, destructor, copy constructor
-It will have a character array pointer as an attribute.
-It will have the following functions:\\
-\begin{enumerate}
-\item Join FUNCTION that takes in 2 CHARACTER ARRAYS and joins them together and returns a longer SuperString
-\item An overloaded Join FUNCTION that takes in two SuperStrings and joins them together and returns a longer SuperString
-\item Slice function that takes the starting index and ending index and returns a sliced SuperString.
-\item Show function that shows the SuperString
-\item Empty that empties the SuperStrin g.
-\item LENGTH THAT RETURNS THE LENGTH OF THE SuperString
-\end{enumerate}
-\hfill \break
-Start from defining the Constructors and Destructor!
-
-\subsection{Sample Code}
-\begin{lstlisting}
-  #include <iostream>
-  
-  using namespace std;
-  
-  class SuperString
-  {
-    private:
-    char* text;
-    int length;
-    public:
-    SuperString()
-    {
-      length = 0;
-      text = NULL;
-    }
-    SuperString(char* txt)
-    {
-      /*
-      Step 1: Calculate length of the character array
-      Step 2: Allocate Dynamic memory to store the characters of
-      passed array into text pointer of class
-      
-      Note 1: Since elements in the array are stored in sequential
-      order in memory,therefore,a pointer storing address of the
-      first element of the array can simple increment the address by 
-      1 to access the next element of the array and so on.Name of any 
-      array is actually the name of the pointer pointing at the first
-      element of the array. For example:
-      " char array[10] ",'array' is a character type pointer pointing
-      at element at the 0 index of the array.
-      In this task we will not increment the pointer
-      however c++ gives us the functionality to access all the
-      elements in array using indexing for example array[2] refers to
-      the element at the 2nd index of array.
-      
-      Note 2: All character end must have their last element as 
-      character or NULL '\0' known as the NULL terminator.This
-      indicates the end of a string or character array.
-      
-      */
-    }
-    SuperString(const SuperString& myString)
-    {
-      /*
-      Shallow copy is when two collections share the 
-      individual elements.Changes made to the elements
-      of any collections will change both collections
-      Deep copy of a collection is when elements of a 
-      collections is copied to the other collection. Both
-      these collections work independently once
-      the elements are copied unlike shallow
-      copy.
-      
-      Note 1: Parameter of this function is a constant 
-      which means function must not change the input object
-      while making a copy. (Hint: make deep copy) 
-      */
-    }
-    
-    void Show()
-    {
-      //Displays text
-    }
-    
-    SuperString Join (char array_1[], char array_2[])
-    {
-      /*
-      Step 1: Calculate length of both the arrays
-      and create a dynamic array whose length is the
-      sum of the length of array_1 and array_2 
-      Step 2: Copy the elements of both the arrays
-      into the new array created.
-      Step 3: Pass the new array to a SuperString
-      object and return the object
-      */
-      int len_array_1 = 0;
-      int len_array_2 = 0;
-      
-      //Write your code here
-      
-      int tempLen = len_array_1 + len_array_2;
-      char* temp = new char[tempLen+1];
-      //+ 1 is done to store NULL terminator
-      //Write your code here
-    }
-    
-    SuperString Join (SuperString& a,SuperString& b)
-    {
-      //Write your code here
-    }
-    
-    SuperString Slice(int start, int end){}
-    SuperString Empty(){}
-    ~SuperString(){}
-    
-  };
-\end{lstlisting}
 
 \newpage
 \section{Solution}
@@ -3505,4 +3525,458 @@ Now, we have our \texttt{Character} Class ready. We will make \texttt{Text} clas
   }
 }\\
 
+
 \end{document}
+
+
+  
+% \newpage
+% % ----------------------------------------------------------------------------------------
+% \chapterimage{chapter_head_2.pdf} % Chapter heading image
+% \chapter{Constructors in C++ \hspace{36mm} {\textsc{\small SCRIPTED BY : MINHAJ AHMED}}}
+
+% \section{Objective}\index{Objective}
+
+% This Lab session introduces you to the Different types of Constructors in C++. In this lab, you will learn
+
+% \begin{itemize}
+% \item The different types of Constructors.
+% \item Overloaded Constructors.
+% \item Copy Constructors.
+% \item Destructors
+% \item Array of Pointers.
+% \end{itemize}
+
+% % ------------------------------------------------
+
+% \section{Key Concepts}\index{Key Concepts}
+
+% \subsection{Constructors}
+
+% Constructors are special member functions of a class that are used for initializing Objects of that class. They are defined within the class and have the same name as the class. They are automatically called upon the creation of an object. Their return type is not specified in the code. If we don't specify a constructor, C++ generates a default constructor that doesn't take any parameters and has an empty body.
+
+% \subsection{Constructor Overloading}
+
+% Function Overloading is a concept in modern programming languages in which two functions may have the same name. The difference between the two functions having the same name is that they have different number, type or order of parameters, but all overloaded functions have the same return type. Like Function Overloading , Constructors can be overloaded too. By giving varying parameter types, we can make different Constructors. First of all, there are two types of constructors for an object. The \textbf{Default Constructor} (also known as the \textbf{Nullary} or \textbf{Parameterless} constructor) does not contain any parameter, and is called by default even if it is not defined by the programmer. The \textbf{Overload Constructor}, takes parameters and initializes the data members of the objects. According to the need, there can be multiple overloaded constructors.
+
+% \subsection{Copy Constructors}
+
+% Copy Constructors are a special type of overloaded constructors that initialize an object using another object, copying the other objects properties in the newly initialized object. The Copy Constructor takes an object by reference as its parameter, in order to access each of its data members and member functions, which can't be done when passing the object by value. Bear in mind that the object being passed in the copy constructor as the parameter must belong to the same class as the object being initialized. The \texttt{const} keyword is used to ensure that the object being passed doesn't get its properties changed in the copy constructor.
+
+% % https://www.cs.nmsu.edu/~rth/cs/cs177/map/datamem.html
+
+% \subsection{Destructors}
+
+% Destructors are special member functions, just like Constructors, that are called automatically when the object goes out of scope or is explicitly deleted. They are used to deallocate memory and do other cleanup for a class object and its data members when the object is destroyed.
+
+
+% \begin{lstlisting}[language=C++, caption={Declaration of Overloaded Constructors, Copy Constructor and Destructor}]
+%   struct Light
+%   {
+%     bool activated;
+%     int brightness;
+    
+%     Light();                                // Default Ctor
+%     Light(bool activated);                  // Overloaded Ctor 1
+%     Light(int brightness);                  // Overloaded Ctor 2
+%     Light(bool activated, int brightness);  // Overloaded Ctor 3
+%     Light(const Light& light);              // Copy Ctor
+%     ~Light()                                // Destructor
+%   }
+% \end{lstlisting}
+
+% \subsection{Array of Pointers}
+
+% Just like how we can declare an array of integers, characters, or strings or user-defined objects, we can also declare an array of pointers that can point to different objects of the same type, for example, an array of integer pointers will have each of its entries point to integers. We can also declare a dynamic array of pointers. Each of its elements are empty pointers when the array is made. Each of these pointers can be used for dynamic memory allocation for objects or can point to already created objects. Deleting an array of pointers might involve accessing each of its elements and deleting them individually as each of its elements are pointers to objects. In the code on the next page, \texttt{lights} is a static array of pointers, while lightptrs is a dynamic array of pointers. Detailed usage is under the Syntax Examples.
+% \vfill
+
+% \begin{lstlisting}[language=C++, caption=Declaration of Arrays of Pointers]
+%   int main()
+%   {
+%     Light *lights[4];   // Static Array of Pointers to 10 integers
+%     Light **lightptrs;  // Declaration of Pointer to a Pointer
+%     // Initialization of the Dynamic Array of Pointers
+%     lightptrs = new Light*[4];
+%     for (int i = 0; i < 4; i++)
+%     {
+%       lights[i] = new Light(); // Filling the Static Array
+%       lightptrs[i] = new Light(); // Filling the Dynamic Array
+%     }
+%   }
+% \end{lstlisting}
+
+% % ------------------------------------------------
+% % \vspace{-1.3cm}
+
+% \section{Syntax Examples}\index{Syntax Examples}
+
+% % \vspace{-1em}
+
+% \begin{lstlisting}[language=C++, caption={Default, Overloaded and Copy Constructors}]
+%   struct BookShelf
+%   {
+%     int capacity;
+%     Book** books;
+%     int noOfBooks;
+%     BookShelf()
+%     {   // Default Constructor
+%       noOfBooks = 0;
+%     }
+%     BookShelf(int Bookcapacity)
+%     {   // Overloaded Constructor
+%       this->capacity = Bookcapacity;
+%       books = new Book*[capacity];
+%       noOfBooks = 0;
+%     }
+%     BookShelf(const BookShelf& bookshelf) 
+%     {   // Copy Constructor
+%       this->capacity = bookshelf.capacity;
+%       this->noOfBooks = bookshelf.noOfBooks;
+%       this->books = bookshelf.books;
+%     }
+%     Add(Book book)
+%     {   // Member Function
+%       if (noOfBooks < capacity)
+%       {
+%         this->books[noOfBooks] = book;
+%         noOfBooks++;
+%       }
+%     }
+%     ~BookShelf()                            
+%     {   // Destructor
+%       delete [] books;
+%     }
+%   }
+% \end{lstlisting}
+
+
+% % Notice that we didn't make any destructor in our class. That doesn't mean the class does not have any destructor at all. The compiler generates a destructor for the class just like it generates a default constructor. When do we define a destructor for our class then?  When we dynamically allocate any memory using a pointer, we need to free that memory in our destructor, since the automatically generated destructor only deletes the objects, and doesn't free any dynamically allocated memory. The code below doesn't contain any dynamically allocated memory (objects made by \texttt{new} keyword). Also, 
+
+% Even if we don't define our destructor for our class, the compiler generates one for us, that deallocates all objects made inside the class, but it cannot deallocate any dynamically allocated memory, i.e objects created with the \texttt{new} keyword. For such objects we have to define our own destructor which deallocates all dynamically allocated objects.
+
+
+% % \begin{lstlisting}[language=C++, caption={Use of Array of Pointers and Destructors}]
+% %   struct Car
+% %   {
+% %   String model;
+% %   String registration;
+% %   Person* passengers;
+
+% %   Car()                           // Default Ctor
+% %   {
+% %   model = "";
+% %   registration = "";
+% % }
+% %   // Overloaded Constructor
+% %   Car(String Model, String Registration, Person[] persons)
+% %   {
+% %   this->model = Model;
+% %   this->registration = Registration;
+% %   this->passengers = persons;
+% % }
+% %   Car(const Car& car)   // Copy Constructor
+% %   {
+% %   this->model = car.model;
+% %   this->registration = car.registration;
+% %   this->passengers = car.passengers;
+% % }
+% %   // passengers can exist outside of the car object, so
+% %   // the pointers to the passengers will be made NULL,
+% %   // rather than deleting them in the Destructor.
+% %   ~Car()               // Destructor
+% %   {
+% %   for (int i = 0; i < 4; i++)
+% %   {
+% %   this->passengers[i] = NULL;
+% % }
+% % }
+% % }
+% % \end{lstlisting}
+
+% \begin{lstlisting}[language=C++, caption={Use of Array of Pointers and Destructors}]
+%   int main()
+%   {
+%     int** ptrs;                 //Pointer to an array of pointers
+%     ptrs = new int*[5];         // Dynamic allocation of array of 
+%     for (int i = 0; i < 5; i++) // pointers
+%     {
+%       ptrs[i] = new int(i);   // making new objects in each 
+%     }                           // element of the pointer array.
+%     for (int i = 0; i < 5; i++)
+%     {
+%       cout << *(ptrs[i]);     // Each entry is a pointer, for the
+%     }                           // value we need to dereference it.
+%     for (int i = 0; i < 5; i++)
+%     {
+%       delete ptrs[i];         // Delete each pointer
+%     }  
+%     delete [] ptrs;             // Delete the pointer array
+    
+%     return 0;
+%   }
+% \end{lstlisting}
+
+% \newpage
+% \section{Problems}\index{Problems}
+
+% \begin{problem} Make a class Point which has x and y coordinates as its data members, and a display() member function that shows the coordinates in the format (x,y) on the console. Make its default, overloaded and copy constructors. \\
+% \end{problem}
+% \begin{problem} Write a Class Quadrilateral that has an array of pointers that points to 4 Objects of type Point. Make its default, overloaded and copy constructors and destructor. There must be an overload constructor that takes coordinates in integer type, an overloaded constructor that takes 4 Point Objects and copies them to create new objects. Remember that dynamically created objects have to be deleted explicitly. \\
+% \end{problem}
+% \begin{problem} Write a C++ Class called SuperString that contains a character array pointer as an attribute. Make its default, overloaded and copy constructors and destructor. The Overloaded Constructor must take a char array as an argument. The class must have a display() that prints the text on the console, an empty() function that empties the SuperString, and a length() function that returns the length of the SuperString. All these functions have to be member functions of the class.
+% \end{problem}
+
+% \newpage
+% \section{Solution}
+% \begin{lstlisting}[language=C++]
+%   // ... copy and paste your code
+% \end{lstlisting}
+
+% \newpage
+% \section{Student Feedback}
+% \textbf{What did you learn from this lab?}\\
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+% \textbf{What part of the lab is still unclear to you?}\\
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+% \textbf{What can be improved in this lab?}\\ 
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+
+% \newpage
+% % ----------------------------------------------------------------------------------------
+% \chapterimage{chapter_head_2.pdf} % Chapter heading image
+
+% \chapter{More On Constructors \hspace{32mm} {\textsc{\small SCRIPTED BY : ABDUL RAFAY}}}
+% \section{Default Constructor}\index{Default Constructor} 
+% Default constructors initializes the class internals.It is created by compiler by default if user has not declared a constructor and they are called automatically when an object is made.
+
+% \subsection{Sample Code}
+% \begin{lstlisting}
+%   class myClass
+%   {
+%     public:
+%     myClass()
+%     {
+%       health = 100;
+%       daysOfWeek = 7;
+%       cout << "Default Constructor called" << endl;
+%     }
+    
+%     private:
+%     int health;
+%     int daysOfWeek;
+%   };
+  
+%   void main()
+%   {
+%     myClass obj;
+%   }
+% \end{lstlisting}
+% \textbf{Output:} \\
+% Default Constructor called\\
+
+% \section{Constructor Overloading}\index{Constructor Overloading}
+% Constructors can be overloaded the same way function are overloaded in c++.Overloaded constructors have the same name as the class and they vary in terms of number and types of arguments passed: upon which a specific constructor is called.
+
+% \subsection{Sample Code}
+% \begin{lstlisting}
+%   class myClass
+%   {
+%     public:
+%     myClass(int HEALTH, int DOW)
+%     {
+%       health = HEALTH;
+%       daysOfWeek = DOW;
+%     }
+%     private:
+%     int health;
+%     int daysOfWeek;
+%   };
+  
+%   void main()
+%   {
+%     //Overload constructor with 2 int type arguments is called
+%     myClass obj(100, 7);  
+%   }
+% \end{lstlisting}
+% \subsection{Copy Constructor}\index{Copy Constructor}
+% There is a special type of overloaded constructor called the 'Copy Constructor' which takes reference of an object of the same class and copies the content of the referenced object into the object whose copy constructor is called.
+% \subsection{Sample Code}
+% \begin{lstlisting}
+%   class myClass
+%   {
+%     public:
+%     myClass(const myClass& ref_obj)
+%     {
+%       health = ref_obj.health;
+%       daysOfWeek = ref_obj.daysOfWeek;
+%     }
+%     private:
+%     int health;
+%     int daysOfWeek;
+%   };
+  
+%   void main()
+%   {
+%     /*
+%     Copy constructor is called when an object is assigned to another object 
+%     of the same class
+%     */
+    
+%     myClass ref_obj(100, 7);
+%     myClass obj = ref_obj; //Copy Constructor called
+%   }
+% \end{lstlisting}
+% \begin{tcolorbox}[width=\textwidth,colback={white},title={KEYNOTE},colbacktitle=purple!50!white,coltitle=black]
+%   By design all the private variables are per class and \emph{NOT}  per object that is why objects of same class can have access to each others private variable. Due to this reason in listing shown above health = \texttt{ref\_obj}.health does not give any error.
+  
+% \end{tcolorbox}
+
+% \section{Problems}\index{Problems}
+% You are going to Write your own String class. Let us call it SuperString
+% The class will have constructor, overloaded constructor that takes in a \emph{character array}, destructor, copy constructor
+% It will have a character array pointer as an attribute.
+% It will have the following functions:\\
+% \begin{enumerate}
+% \item Join FUNCTION that takes in 2 CHARACTER ARRAYS and joins them together and returns a longer SuperString
+% \item An overloaded Join FUNCTION that takes in two SuperStrings and joins them together and returns a longer SuperString
+% \item Slice function that takes the starting index and ending index and returns a sliced SuperString.
+% \item Show function that shows the SuperString
+% \item Empty that empties the SuperStrin g.
+% \item LENGTH THAT RETURNS THE LENGTH OF THE SuperString
+% \end{enumerate}
+% \hfill \break
+% Start from defining the Constructors and Destructor!
+
+% \subsection{Sample Code}
+% \begin{lstlisting}
+%   #include <iostream>
+  
+%   using namespace std;
+  
+%   class SuperString
+%   {
+%     private:
+%     char* text;
+%     int length;
+%     public:
+%     SuperString()
+%     {
+%       length = 0;
+%       text = NULL;
+%     }
+%     SuperString(char* txt)
+%     {
+%       /*
+%       Step 1: Calculate length of the character array
+%       Step 2: Allocate Dynamic memory to store the characters of
+%       passed array into text pointer of class
+      
+%       Note 1: Since elements in the array are stored in sequential
+%       order in memory,therefore,a pointer storing address of the
+%       first element of the array can simple increment the address by 
+%       1 to access the next element of the array and so on.Name of any 
+%       array is actually the name of the pointer pointing at the first
+%       element of the array. For example:
+%       " char array[10] ",'array' is a character type pointer pointing
+%       at element at the 0 index of the array.
+%       In this task we will not increment the pointer
+%       however c++ gives us the functionality to access all the
+%       elements in array using indexing for example array[2] refers to
+%       the element at the 2nd index of array.
+      
+%       Note 2: All character end must have their last element as 
+%       character or NULL '\0' known as the NULL terminator.This
+%       indicates the end of a string or character array.
+      
+%       */
+%     }
+%     SuperString(const SuperString& myString)
+%     {
+%       /*
+%       Shallow copy is when two collections share the 
+%       individual elements.Changes made to the elements
+%       of any collections will change both collections
+%       Deep copy of a collection is when elements of a 
+%       collections is copied to the other collection. Both
+%       these collections work independently once
+%       the elements are copied unlike shallow
+%       copy.
+      
+%       Note 1: Parameter of this function is a constant 
+%       which means function must not change the input object
+%       while making a copy. (Hint: make deep copy) 
+%       */
+%     }
+    
+%     void Show()
+%     {
+%       //Displays text
+%     }
+    
+%     SuperString Join (char array_1[], char array_2[])
+%     {
+%       /*
+%       Step 1: Calculate length of both the arrays
+%       and create a dynamic array whose length is the
+%       sum of the length of array_1 and array_2 
+%       Step 2: Copy the elements of both the arrays
+%       into the new array created.
+%       Step 3: Pass the new array to a SuperString
+%       object and return the object
+%       */
+%       int len_array_1 = 0;
+%       int len_array_2 = 0;
+      
+%       //Write your code here
+      
+%       int tempLen = len_array_1 + len_array_2;
+%       char* temp = new char[tempLen+1];
+%       //+ 1 is done to store NULL terminator
+%       //Write your code here
+%     }
+    
+%     SuperString Join (SuperString& a,SuperString& b)
+%     {
+%       //Write your code here
+%     }
+    
+%     SuperString Slice(int start, int end){}
+%     SuperString Empty(){}
+%     ~SuperString(){}
+    
+%   };
+% \end{lstlisting}
+
+% \newpage
+% \section{Solution}
+% \begin{lstlisting}[language=C++]
+%   // ... copy and paste your code
+% \end{lstlisting}
+
+% \newpage
+% \section{Student Feedback}
+% \textbf{What did you learn from this lab?}\\
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+% \textbf{What part of the lab is still unclear to you?}\\
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+% \textbf{What can be improved in this lab?}\\ 
+% \noindent\fbox{\parbox{\textwidth}{
+%     % Your feedback here.
+%   }
+% }\\
+
